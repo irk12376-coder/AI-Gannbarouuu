@@ -1,0 +1,17 @@
+# 請求書処理ポリシー(サンプル・要カスタマイズ)
+# invoice-processor エージェントが照合に使用します。
+# 実際の社内規定に合わせて金額基準・運用ルールを書き換えてください。
+
+approval_thresholds:
+  auto_ok_under_jpy: 100000      # この金額未満は OK 判定の対象(他の条件を満たす場合)
+  requires_approval_over_jpy: 100000  # 以上は必ず「要確認」(人間の承認が必要)
+
+payment_terms:
+  default_payment_site_days: 30
+  warn_if_due_within_days: 7     # 支払期日までの残日数がこれ以下なら報告時に強調する
+
+general_rules:
+  - 同一請求書番号が既存サマリーに存在する場合は「重複疑い」とする
+  - 同一取引先×同一金額の請求が既存サマリーに存在する場合は「重複疑い」とする
+  - 取引先名・請求書番号・金額・支払期日のいずれかが読み取れない場合は「要確認」とする
+  - requires_approval_over_jpy 以上の金額は無条件で「要確認」とする

@@ -1,0 +1,27 @@
+# 経費精算ポリシー(サンプル・要カスタマイズ)
+# expense-report-processor エージェントが照合に使用します。
+# 実際の社内規定に合わせて金額・科目・運用ルールを書き換えてください。
+
+categories:
+  交通費:
+    receipt_required: true
+    single_item_limit_jpy: 50000
+  交際費:
+    receipt_required: true
+    single_item_limit_jpy: 30000
+    note: 参加者・目的の記載がない場合は要確認とする
+  会議費:
+    receipt_required: true
+    single_item_limit_jpy: 10000
+  消耗品費:
+    receipt_required: true
+    single_item_limit_jpy: 20000
+  通信費:
+    receipt_required: false
+    single_item_limit_jpy: 10000
+
+general_rules:
+  - 領収書必須の科目で領収書画像/PDFが読み取れない場合は「要確認」とする
+  - 同一日付・同一金額・同一支払先の重複申請は「要確認」とする
+  - single_item_limit_jpy を超える申請は「要確認」とする(規定の科目区分にない場合も同様)
+  - 個人的な支出と疑われる摘要(私物、私的利用等の記載)は「規定違反」とする
