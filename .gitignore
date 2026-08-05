@@ -3,3 +3,7 @@
 node_modules/
 __pycache__/
 .env
+
+# YouTube Shorts automation runtime output (deliverables are per-run artifacts,
+# not meant to live in git history). data/history/*.json IS tracked (dedupe ledger).
+automation/youtube_shorts/output/

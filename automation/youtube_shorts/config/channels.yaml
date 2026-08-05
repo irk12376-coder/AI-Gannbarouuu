@@ -1,0 +1,153 @@
+# YouTube Shorts 自動投稿 - 市場別チャンネル設定
+#
+# 各市場は元のTikTok運用仕様(裏側ノートシリーズ)を踏まえつつ、
+# 直訳ではなく市場別に企画・テーマ配分・投稿時間を分けている。
+#
+# slots[].theme_weights はテーマカテゴリの出現比率(content_brainが
+# 履歴を見ながら重み付き抽選する際に使用)。
+
+markets:
+  ja:
+    enabled: true
+    channel_label: "裏側ノート｜人間・世界・お金"
+    language: ja
+    locale: ja-JP
+    timezone: "Asia/Tokyo"
+    tts_voice: "ja-JP-NanamiNeural"
+    tts_voice_alt: "ja-JP-KeitaNeural"
+    default_category_id: "27"  # Education
+    slots:
+      - id: kokoro
+        label: "心の裏側"
+        publish_time_local: "09:00"
+        theme_pool: psychology
+        theme_weights:
+          psychology_relationship: 0.45
+          psychology_cognitive_bias: 0.30
+          lifehack: 0.25
+      - id: sekai
+        label: "世界の裏側"
+        publish_time_local: "12:00"
+        theme_pool: world
+        theme_weights:
+          history_mystery: 0.40
+          urban_legend: 0.25
+          trivia: 0.20
+          news_explained: 0.15
+      - id: okane
+        label: "お金の裏側"
+        publish_time_local: "20:00"
+        theme_pool: finance
+        theme_weights:
+          personal_finance_mechanism: 0.50
+          investing_basics: 0.30
+          financial_system: 0.20
+        finance_disclaimer_required: true
+    hashtag_pool:
+      - "#裏側ノート"
+      - "#心理学"
+      - "#雑学"
+      - "#都市伝説"
+      - "#お金の勉強"
+      - "#歴史"
+      - "#豆知識"
+      - "#shorts"
+
+  en:
+    enabled: true
+    channel_label: "The Hidden Side | Mind, World & Money"
+    language: en
+    locale: en-US
+    timezone: "America/New_York"
+    tts_voice: "en-US-AriaNeural"
+    tts_voice_alt: "en-US-GuyNeural"
+    default_category_id: "27"
+    slots:
+      - id: daily
+        label: "Daily Short"
+        publish_time_local: "18:00"
+        theme_pool: mixed
+        theme_weights:
+          documented_mystery_history: 0.40
+          psychology_cognitive_bias: 0.30
+          scams_personal_finance: 0.20
+          news_explained_simply: 0.10
+        finance_disclaimer_required: true
+    hashtag_pool:
+      - "#thehiddenside"
+      - "#psychology"
+      - "#historymystery"
+      - "#didyouknow"
+      - "#personalfinance"
+      - "#shorts"
+
+  ko:
+    enabled: true
+    channel_label: "이면 노트 | 인간·세계·돈"
+    language: ko
+    locale: ko-KR
+    timezone: "Asia/Seoul"
+    tts_voice: "ko-KR-SunHiNeural"
+    tts_voice_alt: "ko-KR-InJoonNeural"
+    default_category_id: "27"
+    slots:
+      - id: daily
+        label: "일일 숏폼"
+        publish_time_local: "19:00"
+        theme_pool: mixed
+        theme_weights:
+          workplace_relationship_psychology: 0.40
+          consumption_debt_saving_investing: 0.25
+          korea_east_asia_history: 0.20
+          scam_digital_habit_defense: 0.15
+        finance_disclaimer_required: true
+    hashtag_pool:
+      - "#이면노트"
+      - "#심리학"
+      - "#직장생활"
+      - "#재테크"
+      - "#역사미스터리"
+      - "#shorts"
+
+  zh:
+    enabled: true
+    channel_label: "暗面笔记｜人性·世界·金钱"
+    language: zh
+    locale: zh-CN
+    timezone: "Asia/Shanghai"
+    tts_voice: "zh-CN-XiaoxiaoNeural"
+    tts_voice_alt: "zh-CN-YunxiNeural"
+    default_category_id: "27"
+    content_policy_notes: >
+      根拠のない陰謀論・迷信の事実化・対立煽り(職場論/男女論/世代論)・
+      根拠のない攻撃・断定的な金融表現・AI生成コンテンツの未申告は禁止。
+      公的資料・史料を優先して確認する。
+    slots:
+      - id: daily
+        label: "每日短视频"
+        publish_time_local: "19:30"
+        theme_pool: mixed
+        theme_weights:
+          workplace_relationship_emotion: 0.35
+          anti_fraud_consumer_finance: 0.25
+          china_history_culture: 0.20
+          family_interpersonal_defense: 0.15
+          news_explained_official: 0.05
+        finance_disclaimer_required: true
+    hashtag_pool:
+      - "#暗面笔记"
+      - "#心理学"
+      - "#职场"
+      - "#历史"
+      - "#理财"
+      - "#shorts"
+
+# 検証期間(最初の14日間)の運用ペース。GitHub Actionsのcronはこの構成を
+# 前提にしている。データが揃ったら海外版も最大3本/日へ増やす想定。
+rollout_plan:
+  validation_period_days: 14
+  daily_targets:
+    ja: 3
+    en: 1
+    ko: 1
+    zh: 1

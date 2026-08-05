@@ -1,0 +1,60 @@
+# 画像・動画デザイン設定 (絶対条件を機械的に強制するための設定値)
+#
+# 禁止事項(コード側でも強制する):
+#   - シリーズ名/エピソード番号/左上黒角丸ラベル/左上赤い線/右上ページ番号を描画しない
+#   - 画像上部に余白を残す
+#   - AI背景に文字・数字・ロゴ・透かしを生成させない(背景は無地/抽象テクスチャのみ)
+
+canvas:
+  width: 1080
+  height: 1920
+  top_safe_margin_px: 260   # 上部の余白(UI・視線導線確保)
+  bottom_safe_margin_px: 320  # TikTok/YouTube Shorts UI(キャプション・アイコン列)を避ける
+  side_margin_px: 96
+
+palette:
+  background_dark: [22, 21, 25]
+  background_mid: [72, 66, 76]
+  vignette: [0, 0, 0]
+  text_primary: "#F5F5F0"      # 本文: 白系
+  text_emphasis: "#8B1E1E"     # 強調語: 暗い赤
+  text_outline: "#000000"
+
+fonts:
+  # Noto Serif CJK が ja/ko/zh/en(ラテン部)を1本でカバーする
+  primary: "/usr/share/fonts/opentype/noto/NotoSerifCJK-Bold.ttc"
+  primary_regular: "/usr/share/fonts/opentype/noto/NotoSerifCJK-Regular.ttc"
+  size_title_px: 92
+  size_body_px: 60
+  size_cta_px: 56
+  outline_width_px: 6
+  line_spacing: 1.35
+
+background_style:
+  motif_pool:
+    - "oil painting texture, dark room, faint candlelight, no people, no text"
+    - "charcoal sketch texture, old library shelves in shadow, no people, no text"
+    - "antique book pages and ink stains, dim lighting, no people, no text"
+    - "silhouette of a single figure facing away in a dark corridor, no visible face, no text"
+    - "old paper and torn edges, deep shadow vignette, no people, no text"
+    - "foggy dark street at night, distant streetlight, no people, no text"
+  forbidden_terms:
+    - blood
+    - gore
+    - corpse
+    - explicit horror
+    - text
+    - logo
+    - watermark
+    - numbers
+    - japanese characters
+    - korean characters
+    - chinese characters
+
+video:
+  fps: 30
+  seconds_per_page_min: 3.2
+  seconds_per_page_max: 6.5
+  ken_burns_zoom_per_second: 0.045
+  crossfade_seconds: 0.35
+  narration_padding_seconds: 0.4

@@ -1,0 +1,100 @@
+name: YouTube Shorts Daily Automation
+
+# 台本生成〜画像・音声・動画合成〜YouTubeへのスケジュール投稿までを
+# 市場(ja/en/ko/zh)・投稿枠ごとに自動実行するワークフロー。
+#
+# 各cronは「実際の公開時刻の2時間前」を狙って生成ジョブを起動する。
+# 動画は privacyStatus=private + publishAt でスケジュール投稿するため、
+# YouTube側が指定時刻に自動公開する(生成ジョブの実行時刻そのものが
+# 公開時刻になるわけではない)。
+#
+# 必要なSecrets (市場ごと、README参照):
+#   ANTHROPIC_API_KEY
+#   YOUTUBE_{JA,EN,KO,ZH}_CLIENT_ID
+#   YOUTUBE_{JA,EN,KO,ZH}_CLIENT_SECRET
+#   YOUTUBE_{JA,EN,KO,ZH}_REFRESH_TOKEN
+
+on:
+  workflow_dispatch:
+    inputs:
+      market:
+        description: "手動実行対象の市場 (ja/en/ko/zh)"
+        required: true
+        default: "ja"
+        type: choice
+        options: [ja, en, ko, zh]
+      slot:
+        description: "投稿枠ID (例: kokoro/sekai/okane/daily)"
+        required: true
+        default: "kokoro"
+      dry_run_upload:
+        description: "trueの場合、実際のアップロードは行わずリクエスト内容のみ確認する"
+        required: false
+        default: "false"
+        type: choice
+        options: ["true", "false"]
+  schedule:
+    - cron: "0 22 * * *"   # JA 心の裏側(09:00 JST公開)の2時間前
+    - cron: "0 1 * * *"    # JA 世界の裏側(12:00 JST公開)の2時間前
+    - cron: "0 9 * * *"    # JA お金の裏側(20:00 JST公開)の2時間前
+    - cron: "0 21 * * *"   # EN daily(18:00 America/New_York想定公開)の2時間前 ※DST未対応、±1時間ずれることがある
+    - cron: "0 8 * * *"    # KO daily(19:00 KST公開)の2時間前
+    - cron: "30 9 * * *"   # ZH daily(19:30 CST公開)の2時間前
+
+permissions:
+  contents: write  # data/history/*.json (重複防止台帳) をワークフローからコミットするために必要
+
+jobs:
+  ja-kokoro:
+    if: github.event.schedule == '0 22 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.market == 'ja' && github.event.inputs.slot == 'kokoro')
+    uses: ./.github/workflows/_run-slot.yml
+    with:
+      market: ja
+      slot: kokoro
+      dry_run_upload: ${{ github.event.inputs.dry_run_upload || 'false' }}
+    secrets: inherit
+
+  ja-sekai:
+    if: github.event.schedule == '0 1 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.market == 'ja' && github.event.inputs.slot == 'sekai')
+    uses: ./.github/workflows/_run-slot.yml
+    with:
+      market: ja
+      slot: sekai
+      dry_run_upload: ${{ github.event.inputs.dry_run_upload || 'false' }}
+    secrets: inherit
+
+  ja-okane:
+    if: github.event.schedule == '0 9 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.market == 'ja' && github.event.inputs.slot == 'okane')
+    uses: ./.github/workflows/_run-slot.yml
+    with:
+      market: ja
+      slot: okane
+      dry_run_upload: ${{ github.event.inputs.dry_run_upload || 'false' }}
+    secrets: inherit
+
+  en-daily:
+    if: github.event.schedule == '0 21 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.market == 'en' && github.event.inputs.slot == 'daily')
+    uses: ./.github/workflows/_run-slot.yml
+    with:
+      market: en
+      slot: daily
+      dry_run_upload: ${{ github.event.inputs.dry_run_upload || 'false' }}
+    secrets: inherit
+
+  ko-daily:
+    if: github.event.schedule == '0 8 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.market == 'ko' && github.event.inputs.slot == 'daily')
+    uses: ./.github/workflows/_run-slot.yml
+    with:
+      market: ko
+      slot: daily
+      dry_run_upload: ${{ github.event.inputs.dry_run_upload || 'false' }}
+    secrets: inherit
+
+  zh-daily:
+    if: github.event.schedule == '30 9 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.market == 'zh' && github.event.inputs.slot == 'daily')
+    uses: ./.github/workflows/_run-slot.yml
+    with:
+      market: zh
+      slot: daily
+      dry_run_upload: ${{ github.event.inputs.dry_run_upload || 'false' }}
+    secrets: inherit

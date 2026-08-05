@@ -1,0 +1,78 @@
+name: (internal) run one market/slot
+
+on:
+  workflow_call:
+    inputs:
+      market:
+        required: true
+        type: string
+      slot:
+        required: true
+        type: string
+      dry_run_upload:
+        required: false
+        type: string
+        default: "false"
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: automation/youtube_shorts
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system dependencies (ffmpeg, Noto Serif CJK)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends ffmpeg fonts-noto-cjk fonts-noto-core
+
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run pipeline
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          YOUTUBE_JA_CLIENT_ID: ${{ secrets.YOUTUBE_JA_CLIENT_ID }}
+          YOUTUBE_JA_CLIENT_SECRET: ${{ secrets.YOUTUBE_JA_CLIENT_SECRET }}
+          YOUTUBE_JA_REFRESH_TOKEN: ${{ secrets.YOUTUBE_JA_REFRESH_TOKEN }}
+          YOUTUBE_EN_CLIENT_ID: ${{ secrets.YOUTUBE_EN_CLIENT_ID }}
+          YOUTUBE_EN_CLIENT_SECRET: ${{ secrets.YOUTUBE_EN_CLIENT_SECRET }}
+          YOUTUBE_EN_REFRESH_TOKEN: ${{ secrets.YOUTUBE_EN_REFRESH_TOKEN }}
+          YOUTUBE_KO_CLIENT_ID: ${{ secrets.YOUTUBE_KO_CLIENT_ID }}
+          YOUTUBE_KO_CLIENT_SECRET: ${{ secrets.YOUTUBE_KO_CLIENT_SECRET }}
+          YOUTUBE_KO_REFRESH_TOKEN: ${{ secrets.YOUTUBE_KO_REFRESH_TOKEN }}
+          YOUTUBE_ZH_CLIENT_ID: ${{ secrets.YOUTUBE_ZH_CLIENT_ID }}
+          YOUTUBE_ZH_CLIENT_SECRET: ${{ secrets.YOUTUBE_ZH_CLIENT_SECRET }}
+          YOUTUBE_ZH_REFRESH_TOKEN: ${{ secrets.YOUTUBE_ZH_REFRESH_TOKEN }}
+        run: |
+          python -m src.pipeline \
+            --market "${{ inputs.market }}" \
+            --slot "${{ inputs.slot }}" \
+            --upload \
+            $( [ "${{ inputs.dry_run_upload }}" = "true" ] && echo "" || echo "--no-dry-run-upload" ) \
+            | tee run_report.json
+
+      - name: Upload deliverables as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: youtube-shorts-${{ inputs.market }}-${{ inputs.slot }}-${{ github.run_id }}
+          path: |
+            automation/youtube_shorts/output/${{ inputs.market }}/**
+            automation/youtube_shorts/run_report.json
+          retention-days: 90
+
+      - name: Commit updated dedupe history
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/history/*.json 2>/dev/null || true
+          git diff --cached --quiet || git commit -m "chore: update ${{ inputs.market }} theme history (${{ inputs.slot }})"
+          git push || echo "push skipped (no changes or push failed; history will be re-derived from artifacts if needed)"
