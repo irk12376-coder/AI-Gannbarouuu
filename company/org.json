@@ -1,0 +1,70 @@
+{
+  "company_name": "がんばろう株式会社",
+  "ceo": {
+    "id": "ceo",
+    "name": "社長(あなた)",
+    "title": "社長",
+    "note": "全社の方針決定・最終承認を行う。実際の操作者。"
+  },
+  "hq": {
+    "id": "hq",
+    "name": "経営統括室",
+    "title": "オーケストレーター",
+    "note": "Claude Codeのメインセッション。各部門への指示出しと進捗の取りまとめを行う。"
+  },
+  "departments": [
+    {
+      "id": "keiri",
+      "name": "経理部",
+      "status": "active",
+      "head": null,
+      "members": [
+        {
+          "id": "expense-report-processor",
+          "name": "経費精算担当",
+          "role": "staff",
+          "agent_file": ".claude/agents/expense-report-processor.md"
+        },
+        {
+          "id": "invoice-processor",
+          "name": "請求書処理担当",
+          "role": "staff",
+          "agent_file": ".claude/agents/invoice-processor.md"
+        }
+      ]
+    },
+    {
+      "id": "x-ops",
+      "name": "X運用部",
+      "status": "planned",
+      "head": { "id": "x-department-head", "name": "X運用部長", "role": "head" },
+      "members": [
+        { "id": "x-planner", "name": "企画担当", "role": "staff" },
+        { "id": "x-writer", "name": "ライター", "role": "staff" },
+        { "id": "x-analyst", "name": "分析担当", "role": "staff" }
+      ]
+    },
+    {
+      "id": "instagram-ops",
+      "name": "インスタ運用部",
+      "status": "planned",
+      "head": { "id": "instagram-department-head", "name": "インスタ運用部長", "role": "head" },
+      "members": [
+        { "id": "instagram-visual-planner", "name": "ビジュアル企画担当", "role": "staff" },
+        { "id": "instagram-caption-writer", "name": "キャプション作成担当", "role": "staff" },
+        { "id": "instagram-analyst", "name": "分析担当", "role": "staff" }
+      ]
+    },
+    {
+      "id": "youtube-ops",
+      "name": "YouTube運用部",
+      "status": "planned",
+      "head": { "id": "youtube-department-head", "name": "YouTube運用部長", "role": "head" },
+      "members": [
+        { "id": "youtube-scripter", "name": "台本担当", "role": "staff" },
+        { "id": "youtube-thumbnail", "name": "サムネイル担当", "role": "staff" },
+        { "id": "youtube-analyst", "name": "分析担当", "role": "staff" }
+      ]
+    }
+  ]
+}

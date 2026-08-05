@@ -1,0 +1,12 @@
+{
+  "expense-report-processor": {
+    "status": "idle",
+    "task": null,
+    "updated_at": null
+  },
+  "invoice-processor": {
+    "status": "idle",
+    "task": null,
+    "updated_at": null
+  }
+}

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>がんばろう株式会社 - オフィスビュー</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1 id="company-name">がんばろう株式会社</h1>
+    <p class="subtitle">社長視点オフィスビュー ── 各部門で働くエージェントたちを見守ろう</p>
+  </header>
+
+  <section class="org-chain" id="org-chain">
+    <!-- 社長 / 経営統括室 は JS で描画 -->
+  </section>
+
+  <main id="office" class="office">
+    <!-- 部門ルームは JS で描画 -->
+    <p class="loading">読み込み中...</p>
+  </main>
+
+  <footer class="statusbar">
+    <span id="conn-status">company/org.json を読み込み中...</span>
+    <span id="last-updated"></span>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
