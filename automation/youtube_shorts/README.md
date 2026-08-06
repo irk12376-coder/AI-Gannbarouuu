@@ -140,7 +140,25 @@ python -m src.pipeline --market ja --slot kokoro
 
 # アップロードも試す(dry-runでリクエスト内容だけ確認)
 python -m src.pipeline --market ja --slot kokoro --upload
+
+# 台本を自分で書く/レビュー済みのものを使う(APIキー不要)
+python -m src.pipeline --market ja --slot kokoro \
+  --script-file samples/ja_kokoro_unfinished_tasks.json
+
+# テスト
+python -m unittest discover -s tests
 ```
+
+### 台本を人がレビューしてから使う場合
+
+`--script-file` に台本JSONを渡すと、Claude APIを呼ばずにその台本で
+動画を生成します。スキーマは `samples/ja_kokoro_unfinished_tasks.json`
+が実例です(実際に調査・執筆した日本語1本分がそのまま入っています)。
+
+無人生成に任せきりにせず、金融・歴史・医療など誤りが問題になる回だけ
+人の確認を挟む、といった運用に使えます。指定した改行位置(`\n`)は
+レンダラ側が尊重し、収まらない場合は自動で文字サイズを下げます
+(勝手に不自然な位置で折り返さない)。
 
 ## 既知の制約・今後の改善余地
 
@@ -159,6 +177,11 @@ python -m src.pipeline --market ja --slot kokoro --upload
   出力しています。
 - **英語圏のDST**: cronはUTC固定のため、米国の夏時間切り替えで公開時刻が
   最大1時間ずれます。気になる場合は季節ごとにcron式を手動調整してください。
+- **TTSとネットワーク**: `edge-tts` は WebSocket
+  (`wss://speech.platform.bing.com`)で音声を取得します。WebSocketを
+  通さないプロキシ環境下では接続が拒否され、無音プレースホルダに
+  フォールバックします(GitHub Actionsの通常のランナーでは問題なく動作
+  します)。制限環境で試す場合は `--offline-tts` を明示してください。
 - **3投稿まとめZIP(JA)**: 個々の投稿ZIPは自動生成・検証されますが、
   1日3本をまとめた統合ZIPの自動作成はGitHub Actionsの実行単位をまたぐ
   ため今回は未実装です。必要であれば、各ジョブの成果物(Artifacts)を

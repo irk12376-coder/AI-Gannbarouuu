@@ -27,6 +27,10 @@ fonts:
   size_title_px: 92
   size_body_px: 60
   size_cta_px: 56
+  # 台本が指定した改行位置(\n)を尊重するため、収まらない場合はまず文字を
+  # 縮小して対応し、下限に達して初めて自動折り返しへフォールバックする。
+  size_title_min_px: 62
+  size_body_min_px: 46
   outline_width_px: 6
   line_spacing: 1.35
 

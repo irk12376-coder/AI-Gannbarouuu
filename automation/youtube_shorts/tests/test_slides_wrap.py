@@ -35,7 +35,44 @@ class WrapTests(unittest.TestCase):
 
     def test_wrap_cjk_basic(self):
         lines = slides._wrap_cjk(self.draw, "返信が三時間遅れると何が起きるのか、という話です。", self.font, self.max_width)
-        self._assert_all_lines_fit(lines)
+        for line in lines[:-1]:
+            self.assertLessEqual(self.draw.textlength(line, font=self.font), self.max_width * 1.15)
+
+    def test_kinsoku_no_prohibited_char_starts_a_line(self):
+        # 禁則処理: 「。」「、」などが行頭に落ちてはいけない。
+        text = (
+            "夜、布団の中で急に戻ってくる。あの作業、開いたままだった。"
+            "頭が求めているのは完了ではなく、前に進む合図なのかもしれない。"
+        )
+        for width in [300, 420, 560, 800]:
+            lines = slides._wrap_cjk(self.draw, text, self.font, width)
+            for line in lines:
+                self.assertNotIn(
+                    line[0], slides.LINE_START_PROHIBITED,
+                    f"line starts with prohibited char {line[0]!r} at width={width}: {lines}",
+                )
+
+    def test_kinsoku_no_prohibited_char_ends_a_line(self):
+        # 行末禁則: 開き括弧が行末に取り残されてはいけない。
+        text = "研究では「いつ・どこで・どうやるか」を決めるだけで割り込む思考が減った"
+        for width in [300, 420, 560]:
+            lines = slides._wrap_cjk(self.draw, text, self.font, width)
+            for line in lines:
+                self.assertNotIn(
+                    line[-1], slides.LINE_END_PROHIBITED,
+                    f"line ends with prohibited char {line[-1]!r} at width={width}: {lines}",
+                )
+
+    def test_layout_text_preserves_author_line_breaks_by_shrinking(self):
+        # 台本が指定した改行位置を、自動再折り返しで壊さないこと
+        # (助詞1文字が次行に孤立する問題の回帰テスト)。
+        style = load_style()["fonts"]
+        text = "ただし、有名な部分は\n残らなかった"
+        font, lines = slides._layout_text(
+            self.draw, text, style["primary"],
+            style["size_title_px"], style["size_title_min_px"], 888, "ja",
+        )
+        self.assertEqual(lines, ["ただし、有名な部分は", "残らなかった"])
 
 
 class PlaceholderScriptTests(unittest.TestCase):

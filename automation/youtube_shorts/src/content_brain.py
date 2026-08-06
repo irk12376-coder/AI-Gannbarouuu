@@ -19,6 +19,7 @@ import os
 import random
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
 from typing import Any
 
 from . import dedupe
@@ -212,6 +213,31 @@ def _placeholder_script(slot: SlotConfig, theme_category: str, seq: int) -> dict
         "pages": pages,
         "sources": [],
     }
+
+
+REQUIRED_KEYS = ["theme_category", "theme", "conclusion", "video_title", "description", "pages"]
+
+
+def load_script_file(path: str | Path) -> GeneratedScript:
+    """外部で用意した台本JSONを読み込む(人間のレビュー・手書き台本を通す経路)。
+
+    ANTHROPIC_API_KEYが無い環境や、生成結果を人がレビューしてから
+    確定させたい運用で使う。スキーマは _build_prompt が要求するものと同じ。
+    """
+    with open(path, encoding="utf-8") as f:
+        data = json.load(f)
+
+    missing = [k for k in REQUIRED_KEYS if k not in data]
+    if missing:
+        raise ValueError(f"script file is missing required keys: {missing}")
+    if len(data["pages"]) != 7:
+        raise ValueError(f"script file must contain exactly 7 pages, got {len(data['pages'])}")
+    for page in data["pages"]:
+        for k in ["page", "heading", "body", "narration", "image_motif"]:
+            if k not in page:
+                raise ValueError(f"page {page.get('page', '?')} is missing key '{k}'")
+
+    return GeneratedScript(raw=data, is_placeholder=False, warnings=[f"script loaded from file: {path}"])
 
 
 def generate(slot: SlotConfig) -> GeneratedScript:

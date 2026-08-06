@@ -133,13 +133,20 @@ def run(
     dry_run_upload: bool = True,
     offline_tts: bool = False,
     privacy_status: str = "private",
+    script_file: str | None = None,
 ) -> RunReport:
     slot = get_slot(market, slot_id)
     seq = dedupe.next_seq_number(market)
     run_dir = _run_dir(market, slot_id, seq)
     warnings: list[str] = []
 
-    script = content_brain.generate(slot)
+    if script_file:
+        script = content_brain.load_script_file(script_file)
+        dup = dedupe.is_duplicate_theme(market, script.raw.get("theme", ""), script.raw.get("conclusion", ""))
+        if dup is not None:
+            warnings.append(f"theme resembles existing entry #{dup['seq']:04d} ({dup['theme']}); review before publishing")
+    else:
+        script = content_brain.generate(slot)
     data = script.raw
     warnings.extend(script.warnings)
 
@@ -252,6 +259,10 @@ def main() -> None:
     parser.add_argument("--publish-now", action="store_true", help="dry-run uploadでも即時公開扱いのstatusにする(publishAtを付けない)")
     parser.add_argument("--no-dry-run-upload", dest="dry_run_upload", action="store_false")
     parser.add_argument("--offline-tts", action="store_true", help="TTSをネットワーク不要の無音プレースホルダにする(テスト用)")
+    parser.add_argument(
+        "--script-file",
+        help="台本JSONを外部ファイルから読み込む(APIを使わず、人がレビュー・執筆した台本を通す場合)",
+    )
     parser.set_defaults(dry_run_upload=True)
     args = parser.parse_args()
 
@@ -261,6 +272,7 @@ def main() -> None:
         upload=args.upload,
         dry_run_upload=args.dry_run_upload,
         offline_tts=args.offline_tts,
+        script_file=args.script_file,
     )
     print(json.dumps(asdict(report), ensure_ascii=False, indent=2))
     if not report.zip_verified:
