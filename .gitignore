@@ -3,3 +3,15 @@
 node_modules/
 __pycache__/
 .env
+.pytest_cache/
+*.egg-info/
+
+# paystock の実行時データ
+# (.gitignore は行末コメントを解釈しないので、コメントは必ず独立行に書く)
+# ペーパー口座・発注ジャーナル・当日カウンタ
+.paystock/
+.cache/
+# 緊急停止フラグ
+KILL
+report.html
+screen.html

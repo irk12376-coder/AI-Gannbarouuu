@@ -1,0 +1,91 @@
+# PayPay 証券「保有資産」画面の内容 (2026-08-10 時点のスクリーンショットより)
+#
+# market_value = 評価額 / pnl = 評価損益。この 2 つと shares から取得単価を逆算する。
+# 数字が変わったらここを更新するだけでよい。
+#
+# 注意: PayPay 証券は金額指定売買なので株数が小数になる。
+#       アプリ表示の桁数をそのまま写すのが最も正確。
+
+holdings:
+  - name: 日本製鉄
+    symbol: "5401"
+    kind: jp_stock
+    sector: 鉄鋼
+    shares: 84.2091080572
+    market_value: 57981
+    pnl: 7960
+
+  - name: JX金属
+    symbol: "5016"
+    kind: jp_stock
+    sector: 非鉄金属
+    shares: 12.7078366688
+    market_value: 48629
+    pnl: -1377
+
+  - name: 三菱重工業
+    symbol: "7011"
+    kind: jp_stock
+    sector: 機械・防衛
+    shares: 10.4738403341
+    market_value: 41456
+    pnl: -8547
+
+  - name: 東京エレクトロン
+    symbol: "8035"
+    kind: jp_stock
+    sector: 半導体
+    shares: 0.2584480197
+    market_value: 14493
+    pnl: 4492
+
+  - name: eMAXIS NASDAQ100インデックス
+    kind: fund
+    sector: 海外株式
+    # 投資信託そのものの基準価額は取得できないので、連動指数を代理として見る。
+    # 為替 (円建て基準価額はドル円の影響を受ける) はこの指標に含まれない点に注意。
+    proxy_symbol: "^NDX"
+    shares: 0
+    market_value: 10181
+    pnl: 180
+    note: 判定は NASDAQ100 指数の動きに基づく参考値
+
+  - name: スペース・エクスプロレーション・テクノロジーズ (SpaceX)
+    kind: private
+    sector: 未上場
+    shares: 0.4802159341
+    market_value: 10019
+    pnl: -2982
+    note: 未上場株のため市場価格が存在せず、機械的な売り時判定はできない
+
+  - name: 現金
+    kind: cash
+    market_value: 1531
+
+# ---------------------------------------------------------------- 判定の閾値
+rules:
+  stop_loss_pct: -12.0      # 取得単価からこの率まで下げたら損切り検討
+  atr_stop_multiple: 2.5    # トレーリングストップの ATR 倍率 (大きいほど余裕を持つ)
+  big_gain_pct: 50.0        # ここを超えた含み益は一部利確の検討対象にする
+  trim_score: 25.0
+  sell_score: 45.0
+  buy_score: -25.0
+
+# ------------------------------------------------------------ 自動売買の設定
+# PayPay 証券には発注 API が無いため、ここでの自動売買は
+#   broker: paper  … 完全なシミュレーション (資金は動かない)
+#   broker: kabus  … auカブコム証券 kabu ステーション API 経由の実発注
+# のいずれか。既定は paper + dry_run で、何も発注しない状態。
+trade:
+  enabled: false
+  broker: paper
+  dry_run: true
+  max_position_pct: 20.0
+  max_order_amount: 30000
+  max_orders_per_day: 5
+  max_daily_loss_pct: 5.0
+  min_cash_buffer: 1000
+  kill_switch_file: KILL
+  trading_hours_only: true
+
+universe_path: data/universe_jp.csv

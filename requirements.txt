@@ -1,0 +1,6 @@
+pandas>=2.0
+numpy>=1.24
+PyYAML>=6.0
+requests>=2.31
+# 任意: 入っていれば Yahoo Finance の取得に使う。無い場合は chart API を直接叩く。
+yfinance>=0.2.40
