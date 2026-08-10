@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from datetime import date, datetime
 from pathlib import Path
 from typing import Any
 
@@ -35,10 +36,25 @@ class TradeSettings:
 
 
 @dataclass
+class ManualSettings:
+    """手動で発注する前提の設定。
+
+    PayPay 証券は「金額指定」で売買するので、判定結果を株数ではなく
+    円で出す必要がある。その丸め方と下限をここで決める。
+    """
+
+    min_order_amount: float = 1000.0    # これ未満の金額では発注できない
+    round_to: float = 100.0             # 提示する金額の丸め単位 (円)
+    trim_fraction: float = 1.0 / 3.0    # 「一部利確」で売る割合
+    earnings_warning_days: int = 7      # 決算発表がこの日数以内なら警告する
+
+
+@dataclass
 class AppConfig:
     holdings: list[Holding] = field(default_factory=list)
     rules: RuleConfig = field(default_factory=RuleConfig)
     trade: TradeSettings = field(default_factory=TradeSettings)
+    manual: ManualSettings = field(default_factory=ManualSettings)
     universe_path: str = "data/universe_jp.csv"
     path: Path | None = None
 
@@ -69,6 +85,22 @@ def _as_float(value: Any, field_name: str, holding_name: str) -> float:
         ) from exc
 
 
+def _parse_date(value: Any, holding_name: str) -> date | None:
+    """YAML の日付欄を date に変換する。空欄は None。"""
+    if value in (None, ""):
+        return None
+    if isinstance(value, datetime):
+        return value.date()
+    if isinstance(value, date):
+        return value
+    try:
+        return datetime.strptime(str(value).strip(), "%Y-%m-%d").date()
+    except ValueError as exc:
+        raise ConfigError(
+            f"{holding_name}: next_earnings は YYYY-MM-DD 形式で書いてください ({value!r})"
+        ) from exc
+
+
 def _parse_holding(raw: dict[str, Any], index: int) -> Holding:
     name = str(raw.get("name") or f"(名称未設定 #{index + 1})")
 
@@ -94,6 +126,7 @@ def _parse_holding(raw: dict[str, Any], index: int) -> Holding:
         pnl=_as_float(raw.get("pnl"), "pnl", name),
         proxy_symbol=(str(raw["proxy_symbol"]).strip() if raw.get("proxy_symbol") else None),
         sector=str(raw.get("sector") or "その他"),
+        next_earnings=_parse_date(raw.get("next_earnings"), name),
         note=str(raw.get("note") or ""),
     )
 
@@ -144,6 +177,7 @@ def load(path: Path | str = DEFAULT_PORTFOLIO_PATH) -> AppConfig:
         holdings=holdings,
         rules=_parse_dataclass(RuleConfig, raw.get("rules"), "rules"),
         trade=_parse_dataclass(TradeSettings, raw.get("trade"), "trade"),
+        manual=_parse_dataclass(ManualSettings, raw.get("manual"), "manual"),
         universe_path=str(raw.get("universe_path") or "data/universe_jp.csv"),
         path=path,
     )

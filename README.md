@@ -21,6 +21,9 @@ PayPay 証券で保有している銘柄について、「今売るべきか / �
 テクニカル指標にもとづいて機械的に判定し、あわせて新規の買い候補を
 スクリーニングするコマンドラインツールです。
 
+**発注は利用者がアプリで手動で行う前提**です。本ツールは
+「どの銘柄を、いくら分、なぜ」までを出すところまでを担当します。
+
 > **免責**: 本ツールの出力は公開されている価格データに機械的なルールを
 > 当てはめた結果であり、投資助言ではありません。売買の判断と結果は
 > すべて利用者ご自身の責任となります。
@@ -29,13 +32,16 @@ PayPay 証券で保有している銘柄について、「今売るべきか / �
 
 | コマンド | 内容 |
 | --- | --- |
+| `paystock alert` | **今日やることだけ**を短く表示。無ければ 1 行で終わる |
 | `paystock report` | 保有銘柄ごとの売り時判定 + ポートフォリオ全体の偏り診断 |
 | `paystock screen` | 上昇トレンド継続かつモメンタム上位の銘柄を抽出 |
 | `paystock quote 5401` | 1 銘柄の指標と判定根拠を表示 |
 | `paystock backtest 7011` | 判定ルールが過去にどう機能したかを検証 |
-| `paystock trade` | 自動売買を 1 巡実行 (既定はドライラン = 発注しない) |
-| `paystock paper` | ペーパートレード口座の残高・履歴を表示 |
 | `paystock init` | `portfolio.yaml` の雛形を作成 |
+
+自動発注用の `paystock trade` / `paystock paper` も残っていますが、
+手動で売買するなら使う必要はありません
+(既定で無効なので、放置しても何も起きません)。
 
 ## セットアップ
 
@@ -69,7 +75,24 @@ holdings:
 投資信託は基準価額を直接取得できないため、`proxy_symbol` に連動指数
 (例: NASDAQ100 なら `^NDX`) を書いて代理評価します。
 
-### 2. 売り時を確認する
+`next_earnings: 2026-11-04` を書いておくと、決算発表の 7 日前から警告が出ます。
+手動で売買するなら決算跨ぎの判断が一番重要なので、埋めておくことを勧めます。
+
+### 2. 今日やることを確認する
+
+```bash
+python -m paystock alert          # 対応が必要な銘柄だけ。無ければ 1 行
+python -m paystock alert -q --notify  # cron 用。何も無い日は無言、あれば通知
+```
+
+PayPay 証券は金額指定売買なので、**「◯◯円のうち ◯◯円分を利確」**のように
+そのままアプリに入力できる金額で出ます。金額は常に切り捨てで丸めるため、
+保有額を超える注文にはなりません。
+
+通知先は環境変数で設定します (Slack / Discord の Webhook、または SMTP メール)。
+詳細は [docs/運用ガイド.md](docs/運用ガイド.md)。
+
+### 3. 詳しく見る
 
 ```bash
 python -m paystock report                       # ターミナルに表示
@@ -85,7 +108,7 @@ python -m paystock report -f html -o report.html # スマホで見る用の HTML
 
 判定の閾値は `portfolio.yaml` の `rules:` で変更できます。
 
-### 3. 買い候補を探す
+### 4. 買い候補を探す
 
 ```bash
 python -m paystock screen --exclude-held -n 10
@@ -102,7 +125,7 @@ python -m paystock screen --exclude-held -n 10
 > PayPay 証券の日本株は取扱銘柄が限られています。抽出された銘柄が
 > 実際に買えるかどうかはアプリ側で確認してください。
 
-### 4. ルールを検証する
+### 5. ルールを検証する
 
 ```bash
 python -m paystock backtest 5401 7011 8035 --days 1200
@@ -127,11 +150,19 @@ PayPay 証券の口座については「分析とアラート」までを担当�
 既定は `enabled: false` + `dry_run: true` なので、設定を書き換えない限り
 何も発注されません。
 
+## ドキュメント
+
+- [運用ガイド](docs/運用ガイド.md) — 毎日の使い方、判定の読み方、cron 設定
+- [ポートフォリオ所見](docs/ポートフォリオ所見.md) — 現在の保有構成についての分析
+- [銘柄メモ 2026-08](docs/銘柄メモ_2026-08.md) — 各保有銘柄の決算・材料
+  (ツールが見ていない情報)
+- [自動売買について](docs/自動売買について.md) — なぜ PayPay 証券では自動化しないのか
+
 ## 開発
 
 ```bash
 pip install pytest
-python -m pytest            # 113 件。ネットワークには一切アクセスしません
+python -m pytest            # 139 件。ネットワークには一切アクセスしません
 python -m paystock --offline report   # ダミー価格で動作確認 (投資判断には使用不可)
 ```
 
@@ -142,10 +173,11 @@ paystock/
   models.py           共通データモデル
   config.py           portfolio.yaml の読み込み
   cli.py              コマンドラインインタフェース
+  notify.py           通知の送信 (Slack/Discord Webhook, SMTP メール)
   data/               価格データ取得 (Yahoo → Stooq フォールバック + キャッシュ)
   analysis/           指標計算 (indicators) と判定ルール (rules) とポートフォリオ診断
   screener/           銘柄スクリーニング
-  report/             テキスト / HTML レポート
+  report/             操作リスト (actions) / アラート (alert) / テキスト / HTML
   trade/              ブローカー実装と自動売買エンジン・安全装置
   backtest/           日足バックテスト
 data/universe_jp.csv  スクリーニング対象の銘柄リスト

@@ -1,5 +1,6 @@
 """コマンドラインインタフェース。
 
+  paystock alert           対応が必要な銘柄だけを表示 (毎日の定期実行向け)
   paystock report          保有資産の売り時診断
   paystock screen          これから上がりそうな銘柄のスクリーニング
   paystock quote 5401      1 銘柄の指標を確認
@@ -16,13 +17,15 @@ import logging
 import sys
 from pathlib import Path
 
-from . import __version__, config as config_mod
+from . import __version__, config as config_mod, notify as notify_mod
 from .analysis import indicators as ind_mod
 from .analysis import portfolio as portfolio_mod
 from .analysis.rules import evaluate
 from .backtest import engine as backtest_mod
 from .data import DEFAULT_HISTORY_DAYS, PriceSourceError, build_source
 from .models import AssetKind
+from .report import actions as actions_mod
+from .report import alert as alert_mod
 from .report import html as html_report
 from .report import text as text_report
 from .screener import screen as screen_mod
@@ -106,6 +109,38 @@ def cmd_report(args: argparse.Namespace) -> int:
         _write_output(html_report.render_review(review), args.output)
     else:
         _write_output(text_report.render_review(review, detail=args.detail), args.output)
+    return 0
+
+
+def cmd_alert(args: argparse.Namespace) -> int:
+    """対応が必要な銘柄だけを短く出す。cron + 通知で毎日回す用。"""
+    cfg = config_mod.load(args.config)
+    review = portfolio_mod.review(cfg, _source(args), offline=args.offline)
+    items = actions_mod.build(
+        review,
+        cfg.manual,
+        cash=cfg.cash,
+        max_buy_amount=cfg.trade.max_order_amount,
+    )
+
+    if args.quiet and not alert_mod.has_todo(items):
+        return 0  # 何も無い日は完全に無言 (cron がメールを飛ばさないように)
+
+    body = alert_mod.render(items, include_hold=args.include_hold)
+    if review.offline:
+        body = "!!! オフラインモード: ダミー価格による出力です !!!\n\n" + body
+    print(body)
+
+    if args.notify:
+        todo = sum(1 for i in items if i.actionable)
+        subject = (
+            f"[paystock] 要対応 {todo}件" if todo else "[paystock] 本日は対応なし"
+        )
+        sent = notify_mod.notify(subject, body)
+        print(
+            f"通知を送信しました: {', '.join(sent)}" if sent else "通知先が未設定です",
+            file=sys.stderr,
+        )
     return 0
 
 
@@ -333,6 +368,23 @@ def build_parser() -> argparse.ArgumentParser:
         help="判定根拠の詳細を省略する",
     )
     p.set_defaults(func=cmd_report, detail=True)
+
+    p = sub.add_parser("alert", help="対応が必要な銘柄だけを短く表示 (cron 向け)")
+    p.add_argument(
+        "-q",
+        "--quiet",
+        action="store_true",
+        help="対応事項が無い日は何も出力しない (cron のメール抑制用)",
+    )
+    p.add_argument(
+        "--notify",
+        action="store_true",
+        help="Webhook / メールで通知する (宛先は環境変数)",
+    )
+    p.add_argument(
+        "--include-hold", action="store_true", help="保有継続の銘柄も一覧に出す"
+    )
+    p.set_defaults(func=cmd_alert)
 
     p = sub.add_parser("screen", help="上昇トレンド + モメンタム上位の銘柄を抽出")
     p.add_argument("-u", "--universe", help="銘柄リスト CSV (code,name,sector)")

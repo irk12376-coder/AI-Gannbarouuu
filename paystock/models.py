@@ -49,7 +49,19 @@ class Holding:
     pnl: float = 0.0                   # 同 評価損益 (円)
     proxy_symbol: Optional[str] = None  # FUND の連動指数など、代替で見るシンボル
     sector: str = "その他"              # 集中度チェックに使う分類
+    next_earnings: Optional[date] = None  # 次回決算発表日。手入力
     note: str = ""
+
+    def days_to_earnings(self, today: Optional[date] = None) -> Optional[int]:
+        """次回決算発表まで何日か。過ぎている / 未設定なら None。
+
+        決算跨ぎは値動きが指標では読めないので、手動で売買するなら
+        「持ち越すかどうか」を必ず意識したい情報。
+        """
+        if self.next_earnings is None:
+            return None
+        delta = (self.next_earnings - (today or date.today())).days
+        return delta if delta >= 0 else None
 
     @property
     def cost(self) -> float:
