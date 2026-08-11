@@ -1,0 +1,28 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "paystock"
+version = "1.0.0"
+description = "PayPay 証券の保有資産を分析し、売り時と買い候補を機械的に判定するツール"
+requires-python = ">=3.11"
+dependencies = [
+    "pandas>=2.0",
+    "numpy>=1.24",
+    "PyYAML>=6.0",
+    "requests>=2.31",
+]
+
+[project.optional-dependencies]
+yahoo = ["yfinance>=0.2.40"]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+paystock = "paystock.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["paystock*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
