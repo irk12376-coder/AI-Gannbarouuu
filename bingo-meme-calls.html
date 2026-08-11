@@ -1,0 +1,648 @@
+<title>祭りビンゴ ミーム・コール表 1〜75</title>
+
+<style>
+  :root {
+    --ground: #F4EEE1;
+    --surface: #FFFCF5;
+    --surface-2: #EFE7D6;
+    --ink: #191F33;
+    --ink-soft: #5F6478;
+    --ink-faint: #8B8FA0;
+    --line: #DCD1BB;
+    --accent: #CE3B26;
+    --accent-soft: #F6DED8;
+    --gold: #9A6E12;
+    --gold-soft: #F3E6C4;
+    --asagi: #1C6E6E;
+    --asagi-soft: #D8EAE8;
+    --warn: #8A3B6B;
+    --warn-soft: #F2DDEA;
+    --shadow: 0 1px 2px rgba(25,31,51,.06), 0 8px 24px rgba(25,31,51,.05);
+
+    --display: "Hiragino Mincho ProN", "Yu Mincho", YuMincho, "Noto Serif JP", "Songti SC", serif;
+    --body: "Hiragino Kaku Gothic ProN", "Yu Gothic", YuGothic, "Noto Sans JP", Meiryo, system-ui, sans-serif;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #111629;
+      --surface: #1A2038;
+      --surface-2: #232A45;
+      --ink: #ECE5D6;
+      --ink-soft: #A3A9C2;
+      --ink-faint: #757C9A;
+      --line: #2E3554;
+      --accent: #FF6E4F;
+      --accent-soft: #3A2130;
+      --gold: #E6B84E;
+      --gold-soft: #362D1C;
+      --asagi: #5FC6C0;
+      --asagi-soft: #16323A;
+      --warn: #E48ABF;
+      --warn-soft: #33203A;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.25);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #111629;
+    --surface: #1A2038;
+    --surface-2: #232A45;
+    --ink: #ECE5D6;
+    --ink-soft: #A3A9C2;
+    --ink-faint: #757C9A;
+    --line: #2E3554;
+    --accent: #FF6E4F;
+    --accent-soft: #3A2130;
+    --gold: #E6B84E;
+    --gold-soft: #362D1C;
+    --asagi: #5FC6C0;
+    --asagi-soft: #16323A;
+    --warn: #E48ABF;
+    --warn-soft: #33203A;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.25);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.7;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .wrap {
+    max-width: 1120px;
+    margin: 0 auto;
+    padding: 0 20px 96px;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+  }
+
+  /* ---------- header ---------- */
+
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    padding: 56px 0 0;
+  }
+
+  .lanterns {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--accent);
+  }
+  .lanterns .cord {
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+  }
+  .lanterns .dot {
+    width: 9px;
+    height: 12px;
+    border-radius: 40% 40% 45% 45% / 30% 30% 55% 55%;
+    background: var(--accent);
+    opacity: .85;
+  }
+  .lanterns .dot:nth-child(3) { opacity: .5; }
+  .lanterns .dot:nth-child(4) { opacity: .3; }
+
+  .eyebrow {
+    font-size: 12px;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    font-weight: 600;
+  }
+
+  h1 {
+    font-family: var(--display);
+    font-size: clamp(32px, 6vw, 52px);
+    line-height: 1.25;
+    margin: 0;
+    font-weight: 600;
+    text-wrap: balance;
+    letter-spacing: .01em;
+  }
+  h1 .num { color: var(--accent); }
+
+  .lede {
+    margin: 0;
+    max-width: 62ch;
+    color: var(--ink-soft);
+    font-size: 16px;
+  }
+
+  /* ---------- controls ---------- */
+
+  .controls {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: var(--ground);
+    padding: 14px 0 12px;
+    border-bottom: 1px solid var(--line);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .search-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  #q {
+    flex: 1;
+    min-width: 0;
+    font-family: var(--body);
+    font-size: 17px;
+    color: var(--ink);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+  }
+  #q::placeholder { color: var(--ink-faint); }
+  #q:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-color: transparent;
+  }
+
+  .clear {
+    font-family: var(--body);
+    font-size: 14px;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 12px 14px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .clear:hover { color: var(--ink); border-color: var(--ink-faint); }
+  .clear:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .chip {
+    font-family: var(--body);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ink-soft);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 6px 13px;
+    cursor: pointer;
+    line-height: 1.5;
+  }
+  .chip:hover { border-color: var(--ink-faint); color: var(--ink); }
+  .chip:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .chip[aria-pressed="true"] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--ground);
+  }
+
+  .count {
+    font-size: 13px;
+    color: var(--ink-faint);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- grid ---------- */
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(292px, 1fr));
+    gap: 12px;
+  }
+
+  .card {
+    display: grid;
+    grid-template-columns: 62px 1fr;
+    gap: 14px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px 15px;
+    box-shadow: var(--shadow);
+  }
+  .card.hit {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-soft), var(--shadow);
+  }
+
+  .n {
+    font-size: 40px;
+    font-weight: 700;
+    line-height: 1.05;
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -.02em;
+    padding-top: 2px;
+  }
+
+  .body { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+
+  .title {
+    font-family: var(--display);
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .call {
+    font-size: 14.5px;
+    line-height: 1.65;
+    color: var(--ink);
+  }
+  .call::before {
+    content: "🎤 ";
+    font-size: 12px;
+  }
+
+  .note {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--ink-soft);
+  }
+
+  .tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 3px; }
+
+  .tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .04em;
+    padding: 2px 8px;
+    border-radius: 4px;
+    line-height: 1.7;
+  }
+  .t-鉄板   { color: var(--accent); background: var(--accent-soft); }
+  .t-令和   { color: var(--asagi);  background: var(--asagi-soft); }
+  .t-昭和平成 { color: var(--gold); background: var(--gold-soft); }
+  .t-ネット { color: var(--asagi);  background: var(--asagi-soft); }
+  .t-DJ     { color: var(--gold);   background: var(--gold-soft); }
+  .t-語呂   { color: var(--ink-soft); background: var(--surface-2); }
+  .t-要注意 { color: var(--warn);   background: var(--warn-soft); }
+
+  .empty {
+    padding: 40px 4px;
+    color: var(--ink-soft);
+    font-size: 15px;
+  }
+
+  /* ---------- prose sections ---------- */
+
+  section.prose {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  h2 {
+    font-family: var(--display);
+    font-size: 26px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.35;
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+  }
+  h2::before {
+    content: "";
+    width: 22px;
+    height: 3px;
+    background: var(--accent);
+    border-radius: 2px;
+    flex: none;
+    transform: translateY(-5px);
+  }
+
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 6px 20px 18px;
+    box-shadow: var(--shadow);
+  }
+
+  .panel dl {
+    margin: 0;
+    display: grid;
+    gap: 0;
+  }
+  .panel dt {
+    font-weight: 700;
+    font-size: 15px;
+    margin-top: 14px;
+    color: var(--ink);
+  }
+  .panel dt .k {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+  }
+  .panel dd {
+    margin: 2px 0 0;
+    font-size: 14.5px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+
+  ul.plain {
+    margin: 0;
+    padding-left: 1.15em;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    font-size: 15px;
+    color: var(--ink-soft);
+  }
+  ul.plain strong { color: var(--ink); }
+
+  footer {
+    border-top: 1px solid var(--line);
+    padding-top: 18px;
+    font-size: 13px;
+    color: var(--ink-faint);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  footer a { color: var(--ink-soft); }
+
+  @media (max-width: 480px) {
+    .grid { grid-template-columns: 1fr; }
+    header { padding-top: 36px; }
+    .card { grid-template-columns: 52px 1fr; padding: 13px 14px; }
+    .n { font-size: 34px; }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .card { transition: border-color .15s ease, box-shadow .15s ease; }
+  }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="lanterns" aria-hidden="true">
+      <span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span>
+      <span class="cord"></span>
+    </div>
+    <div class="eyebrow">司会用カンペ ／ 全世代対応</div>
+    <h1>祭りビンゴ<br>ミーム・コール表 <span class="num">1–75</span></h1>
+    <p class="lede">数字を1つずつ、ネタと「そのまま読めるコール例」で。昭和の定番から2025年のTikTok最新まで混ぜてあるので、どの世代かは必ず誰かが拾ってくれます。番号を入力すれば一発で絞り込めます。</p>
+  </header>
+
+  <div class="controls">
+    <div class="search-row">
+      <input id="q" type="search" inputmode="search" placeholder="番号かキーワードを入力（例: 67 / 肉 / DJ）" aria-label="番号かキーワードで検索">
+      <button class="clear" id="clear" type="button">クリア</button>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="タグで絞り込み"></div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+  <p class="empty" id="empty" hidden>該当なし。番号は 1〜75 で入力してください。</p>
+
+  <section class="prose">
+    <h2>本番前に確認しておく数字</h2>
+    <div class="panel">
+      <dl>
+        <dt><span class="k">69</span> ― 海外では完全に下ネタ</dt>
+        <dd>「Nice.」と返すのが定番ミーム。子どもも高齢者もいる場では、ここだけネタを振らず「69番」と淡々と読むのが安全です。DJ側にも「69は素通り」と共有を。</dd>
+
+        <dt><span class="k">34</span> / <span class="k">35</span> ― 足し算に触れない</dt>
+        <dd>アリアナ・グランデの曲名「34+35」は答えが69。単体の番号として振るのはOK、足し算のクダリだけ避ければ問題ありません。</dd>
+
+        <dt><span class="k">28</span> ― 由来は説明しない</dt>
+        <dd>「2828」はネットスラングで意味が良くありません。ニワトリ（ニワ＝28）で押し切るのが無難です。</dd>
+
+        <dt><span class="k">4</span> / <span class="k">9</span> / <span class="k">42</span> / <span class="k">49</span> ― 忌み数</dt>
+        <dd>「死」「苦」ネタは祭りの場では滑ります。四つ葉のクローバー、孫悟空、宇宙の答え、といった明るい側の解釈だけ使ってください。</dd>
+
+        <dt><span class="k">21</span> / <span class="k">50</span> ― 曲を流すなら歌詞に注意</dt>
+        <dd>21 Savage も 50 Cent も原曲はかなり過激です。ネタとして番号を言うだけにするか、DJにクリーン版を用意してもらってください。</dd>
+
+        <dt><span class="k">67</span> ― 大人には10秒の解説を</dt>
+        <dd>今いちばん強いミームですが、通じるのは小中学生と若者だけ。「意味はありません、そこが面白いんです」と一言添えると、逆に大人も笑ってくれます。</dd>
+      </dl>
+    </div>
+  </section>
+
+  <section class="prose">
+    <h2>DJと合わせると効く仕込み</h2>
+    <div class="panel">
+      <ul class="plain" style="margin-top:16px">
+        <li><strong>7・777</strong> ― パチンコのフィーバー音。会場の全世代が一斉に反応する、いちばん確実な当たり札です。</li>
+        <li><strong>8（8888）</strong> ― ニコニコ動画の「パチパチ＝拍手」。拍手SEを重ねて、そのまま拍手を煽れます。</li>
+        <li><strong>33・45</strong> ― レコードの回転数。DJがターンテーブルを指差す小ネタが自然に入ります。</li>
+        <li><strong>55</strong> ― 「ゴーゴー」。ここでBPMを上げる合図に決めておくと、中盤のダレを1回で立て直せます。</li>
+        <li><strong>67</strong> ― Skrilla「Doot Doot (6 7)」のワンフレーズを仕込んでおくと、子どもの声で会場が勝手に完成します。</li>
+        <li><strong>72</strong> ― 「ナニィ!?」のSE。北斗の拳世代と海外ミーム世代が同時に反応する、珍しい両取り番号です。</li>
+        <li><strong>3の倍数</strong> ― 3・6・9・12…と繰り返し使えるので、ナベアツを一度やるなら最初の「3」で仕込んでおくと以降ずっと効きます。</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    <div>タグの見かた ― <strong>鉄板</strong>＝全世代に通じる／<strong>令和</strong>＝子ども・若者向け／<strong>昭和平成</strong>＝親・祖父母世代／<strong>ネット</strong>＝ネット文化圏／<strong>DJ</strong>＝音と合わせる用／<strong>語呂</strong>＝弱め、アドリブの足場</div>
+    <div>67・41の出典: <a href="https://en.wikipedia.org/wiki/6-7_meme">Wikipedia「6-7 meme」</a>／<a href="https://www.justjared.com/2025/09/19/6-7-41-gen-alpha-meme-trends-explained-do-they-actually-mean-anything/">Just Jared</a>。ビンゴコールの伝統は <a href="https://blog.meccabingo.com/bingo-calls-complete-list/">Mecca Bingo</a> の1〜90リストを参考にしています。</div>
+  </footer>
+
+</div>
+
+<script>
+const DATA = [
+  [1,"ワンワン／Kelly's Eye","本日いちばん最初の数字！ ワンッ、ワンッ、1番！","英国ビンゴでは1番を「ケリーの目」と呼ぶ伝統も。","鉄板"],
+  [2,"にゃー／ピース","にゃーん、2番！ 猫の手も借りたい2番！","2＝ニ→猫。指2本のピースでも振れます。","鉄板"],
+  [3,"3の倍数でアホになる","さ〜ん！ …3の倍数でアホになりま〜す！","世界のナベアツ。3・6・9・12…と以降ずっと使い回せる最強の仕込み。","昭和平成"],
+  [4,"四つ葉のクローバー／4番打者","4番サード！ ラッキー四つ葉の4番！","「死」ネタは避けて、幸運側の解釈で。","鉄板"],
+  [5,"ゴー！／ゴレンジャー","ゴー！ 5番！ レッツゴー！","掛け声にそのまま化けるので、テンポを上げたい時に。","鉄板"],
+  [6,"6…7？（67のフリ）","ロク…（タメ）…6番でーす！ 7じゃないよ！","67ミームを知ってる子どもがフライングで叫びます。そこが狙い。","令和"],
+  [7,"ラッキーセブン／777","出ました！ ラッキーセブン、7番！","パチンコのフィーバー音を被せるのが定番。","鉄板"],
+  [8,"8888＝パチパチ（拍手）","8888！ 拍手の8番！ 末広がり！","ニコニコ動画発、拍手を表すネットスラング。縁起も良く二重においしい。","ネット"],
+  [9,"9＋10＝21","9番！ 9足す10は…21！","Vine発の古典ミーム。21が出た時に回収すると効きます。","ネット"],
+  [10,"十点満点／銭湯（1010）","10番！ 十点満点でーす！","「せんとう」で銭湯ネタにも振れます。","鉄板"],
+  [11,"Legs eleven／ポッキーの日","イレブン！ ポッキーの日、11番！","英国ビンゴでは口笛で応えるお約束。11/11で通じます。","鉄板"],
+  [12,"1ダース／干支","1ダースの12番！ 干支もひとまわり！","","鉄板"],
+  [13,"13日の金曜日","出ちゃいました…13番。ジェイソンの番号。","軽く怖がるフリをするだけで十分。引っぱらないこと。","鉄板"],
+  [14,"バレンタイン（2/14）","バレンタインの14番！ チョコの数じゃないよ！","","鉄板"],
+  [15,"イチゴ／尾崎豊「15の夜」","イチゴの15番！ 十五の夜〜！","親世代がまず反応する番号。","昭和平成"],
+  [16,"十六茶／Sweet 16","16茶の16番！","","鉄板"],
+  [17,"ABBA「Dancing Queen」","セブンティーン！ ダンシングクイーンの17！","歌詞が「only seventeen」。DJが被せやすい。","DJ"],
+  [18,"十八番（おはこ）／R-18","十八番の18番！ カラオケの十八番、歌える人？","客いじりに直結する使い勝手のいい番号。","鉄板"],
+  [19,"イク（19）","イクぞー！ 19番！","語呂だけ。テンションで押す枠。","語呂"],
+  [20,"ハタチ・成人","ハタチの20番！ 大人の階段のぼる！","","鉄板"],
+  [21,"21 Savage／ブラックジャック","トゥエンティワン！ ブラックジャックの21番！","9＋10＝21ミームの回収先でもあります。","令和"],
+  [22,"アヒルが2羽／猫の日（2/22）","アヒルが2羽で22番！ クワッ、クワッ！","英国ビンゴ屈指の有名コール「Two little ducks」。","鉄板"],
+  [23,"マイケル・ジョーダン","エアジョーダンの23番！","背番号ネタの中でいちばん世代を選びません。","鉄板"],
+  [24,"コービー・ブライアント／ドラマ『24』","24番！ コービーの背番号、そして24時間テレビ！","","鉄板"],
+  [25,"ニコニコ（25）／クリスマス","ニコニコの25番！ 笑顔でどうぞ！","","ネット"],
+  [26,"風呂（26）","フロの26番！ いい湯だな！","","語呂"],
+  [27,"27クラブ","ロック史の27番、27クラブ！","ジミヘン、カート・コバーン、エイミー・ワインハウス。DJが食いつきます。","DJ"],
+  [28,"ニワトリ（ニワ＝28）","ニワトリの28番！ コケコッコー！","「2828」はネットでは別の意味。由来には触れないこと。","要注意"],
+  [29,"肉の日（29）","肉の日！ 29番！ 焼肉行きたい人！","屋台の焼き鳥・焼きそばに繋げられる祭り向き番号。","鉄板"],
+  [30,"三十路／Dirty Thirty","三十路の30番！ ちょうど折り返し！","","鉄板"],
+  [31,"サーティワン アイスクリーム","31番！ サーティワン！ アイス食べたい！","","鉄板"],
+  [32,"ミニ四駆（ミ＝3、ニ＝2）","ミニの32番！ ミニ四駆世代、いますか？","30〜40代に刺さる番号。","昭和平成"],
+  [33,"ゾロ目／サンサン／33回転","ゾロ目！ サンサン輝く33番！","LPレコードの回転数でもあるのでDJネタにも。","鉄板"],
+  [34,"アリアナ・グランデ「34+35」","34番！ アリアナの34！","足すと69になる曲名。足し算には触れないこと。","要注意"],
+  [35,"サンゴ（35）","サンゴの35番！","34との足し算ネタは封印。","要注意"],
+  [36,"三十六計逃げるに如かず","三十六計！ 逃げるが勝ちの36番！","","昭和平成"],
+  [37,"ミナ（37）さん","ミナサンの37番！ 皆さーん！","会場に呼びかける振りに使えます。","語呂"],
+  [38,"サバ（38）読む","サバの38番！ 年齢サバ読んでない？","","語呂"],
+  [39,"サンキュー／初音ミク","サンキュー！ 39番！ ありがとう！","ミクの「39」でもあり、子どもにも大人にも通じる万能札。","鉄板"],
+  [40,"不惑／Life begins at 40","不惑の40番！ 人生ここからだ！","","鉄板"],
+  [41,"「41」ミーム（Blizzi Boi）","フォーティーワン！ 67派？ 41派？","67のライバルとしてTikTokで流行った数字。67とセットで振ると若い子が沸きます。","令和"],
+  [42,"生命、宇宙、そして万物の答え","出ました42番！ 生命、宇宙、すべての答え！","『銀河ヒッチハイク・ガイド』。MLBでは全球団の永久欠番でもある特別な数字。","ネット"],
+  [43,"シミ（43）","シミの43番！ シミも年輪のうち！","弱め。アドリブの足場として。","語呂"],
+  [44,"ゾロ目／獅子（シシ）舞","ゾロ目！ 獅子舞の44番！","祭りの場なら獅子舞に寄せるのが自然。","語呂"],
+  [45,"45回転レコード","45回転！ DJさん、45番！","シングル盤の回転数。DJを指差す小ネタに。","DJ"],
+  [46,"乃木坂46・欅坂46","坂道の46番！","","鉄板"],
+  [47,"四十七士／47都道府県","四十七士の47番！ 日本全国47！","忠臣蔵で年配層、都道府県で子どもに通じます。","昭和平成"],
+  [48,"AKB48","AKBの48番！","","鉄板"],
+  [49,"四十九（シク）","49番！ 読み方は気にしない！","忌み数なのでネタにせず軽く流すのが吉。","語呂"],
+  [50,"50 Cent／半世紀","フィフティー！ フィフティ・セントの50番！","ちょうど折り返し。景品の中間発表にも使えます。","DJ"],
+  [51,"エリア51／イチロー","エリア51！ UFOの51番！","51番はイチローの背番号でもあります。","鉄板"],
+  [52,"トランプ52枚／52週","トランプ1組、52番！ 1年は52週！","","鉄板"],
+  [53,"東海道五十三次","五十三次の53番！ ゴミの日でもある！","","昭和平成"],
+  [54,"ゴーヨン（54）","ゴーヨン、54番！","弱め。アドリブ枠。","語呂"],
+  [55,"ゾロ目／ゴーゴー","ゴーゴー！ 55番！ 盛り上がっていこう！","ここでBPMを上げる合図に決めておくと中盤のダレを立て直せます。","DJ"],
+  [56,"五郎（56）／孤独のグルメ","ゴローの56番！ 井之頭五郎！","屋台と絡めて食レポ風に振れます。","昭和平成"],
+  [57,"ハインツ57","ハインツの57番！ ケチャップの数字！","","DJ"],
+  [58,"ゴハン（58）","ゴハンの58番！ 屋台でどうぞ！","","語呂"],
+  [59,"ゴクウ（59）","ゴクウの59番！ かめはめ波ー！","子どもから親世代まで全部通ります。","鉄板"],
+  [60,"還暦","還暦の60番！ 赤いちゃんちゃんこ！","会場の還暦の方を探すと確実に盛り上がります。","鉄板"],
+  [61,"ロジャー・マリスの61本塁打","61番！ 伝説のホームラン記録！","野球好きのおじさん枠。","昭和平成"],
+  [62,"アーロン・ジャッジの62本塁打","62番！ ジャッジの新記録！","2022年のア・リーグ記録。61とセットで。","昭和平成"],
+  [63,"六三制（小6・中3）","63番！ 小学6年、中学3年の六三制！","","昭和平成"],
+  [64,"ニンテンドー64／When I'm Sixty-Four","ロクヨン！ ニンテンドー64！","ビートルズの曲名でもあり、親子で別々に刺さる番号。","鉄板"],
+  [65,"定年65歳","65番！ 定年の65！","","鉄板"],
+  [66,"ルート66","ルート66！ アメリカの母なる道！","","DJ"],
+  [67,"「6-7（シックスセブン）」","シーーックス、セブン！！（手を上下に振る）","2025年最大のミーム。Dictionary.comの「今年の言葉」。意味はゼロで、そこが面白いというのがミソ。子どもは全員知っています。","令和"],
+  [68,"ロハ（68）＝タダ","ロハの68番！ タダより高いものはない！","昭和の俗語。年配層だけが笑う渋い一枚。","昭和平成"],
+  [69,"※ネタは振らない","69番。……はい、次いきます。","海外では下ネタミーム（「Nice.」）。淡々と読み上げるのが正解。","要注意"],
+  [70,"古希","古希の70番！ おめでたい！","","鉄板"],
+  [71,"ナイ（71）→ナイス","ナイスの71番！","弱め。アドリブ枠。","語呂"],
+  [72,"ナニ（72）→「ナニィ!?」","ナ、ナニィ!? 72番！","北斗の拳の名台詞であり、海外でも「NANI?!」ミームとして有名。世代の両取りができる貴重な番号。","ネット"],
+  [73,"ナミ（73）／ONE PIECE","ナミの73番！ 波に乗っていこう！","","鉄板"],
+  [74,"ナシ（74）→梨","ナシの74番！ 無しじゃないよ、梨！","","語呂"],
+  [75,"七五三／ビンゴの最大数","大トリ、75番！ 七五三の75、これで全部！","アメリカ式ビンゴは1〜75。最後の1枚として扱えます。","鉄板"]
+];
+
+const TAGS = ["すべて","鉄板","令和","昭和平成","ネット","DJ","語呂","要注意"];
+let activeTag = "すべて";
+
+const grid = document.getElementById("grid");
+const empty = document.getElementById("empty");
+const count = document.getElementById("count");
+const q = document.getElementById("q");
+const chipsBox = document.getElementById("chips");
+
+TAGS.forEach(t => {
+  const b = document.createElement("button");
+  b.type = "button";
+  b.className = "chip";
+  b.textContent = t;
+  b.setAttribute("aria-pressed", String(t === activeTag));
+  b.addEventListener("click", () => {
+    activeTag = t;
+    [...chipsBox.children].forEach(c => c.setAttribute("aria-pressed", String(c.textContent === t)));
+    render();
+  });
+  chipsBox.appendChild(b);
+});
+
+function render() {
+  const term = q.value.trim().toLowerCase();
+  const isNum = /^\d+$/.test(term);
+  grid.textContent = "";
+  let shown = 0;
+
+  DATA.forEach(([n, title, call, note, tag]) => {
+    if (activeTag !== "すべて" && tag !== activeTag) return;
+    let hit = false;
+    if (term) {
+      if (isNum) {
+        if (String(n) !== term && !String(n).startsWith(term)) return;
+        hit = String(n) === term;
+      } else {
+        const hay = (title + call + note + tag).toLowerCase();
+        if (!hay.includes(term)) return;
+      }
+    }
+    shown++;
+
+    const card = document.createElement("article");
+    card.className = "card" + (hit ? " hit" : "");
+
+    const num = document.createElement("div");
+    num.className = "n";
+    num.textContent = n;
+
+    const body = document.createElement("div");
+    body.className = "body";
+
+    const h = document.createElement("div");
+    h.className = "title";
+    h.textContent = title;
+    body.appendChild(h);
+
+    const c = document.createElement("div");
+    c.className = "call";
+    c.textContent = call;
+    body.appendChild(c);
+
+    if (note) {
+      const nt = document.createElement("div");
+      nt.className = "note";
+      nt.textContent = note;
+      body.appendChild(nt);
+    }
+
+    const tg = document.createElement("div");
+    tg.className = "tags";
+    const s = document.createElement("span");
+    s.className = "tag t-" + tag;
+    s.textContent = tag;
+    tg.appendChild(s);
+    body.appendChild(tg);
+
+    card.appendChild(num);
+    card.appendChild(body);
+    grid.appendChild(card);
+  });
+
+  empty.hidden = shown > 0;
+  count.textContent = shown + " / 75 件を表示中";
+}
+
+q.addEventListener("input", render);
+document.getElementById("clear").addEventListener("click", () => {
+  q.value = "";
+  activeTag = "すべて";
+  [...chipsBox.children].forEach(c => c.setAttribute("aria-pressed", String(c.textContent === "すべて")));
+  render();
+  q.focus();
+});
+
+render();
+</script>
