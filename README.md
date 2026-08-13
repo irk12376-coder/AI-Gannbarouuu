@@ -187,3 +187,123 @@ portfolio.yaml        保有資産と設定
 ## ライセンス
 
 社内利用を前提としています。
+
+---
+
+# claude_delegate — Codex から Claude Code へ実装を委託するローカルランナー
+
+Codex が作った実装指示 (タスクファイル) を Claude Code CLI へ渡し、
+このリポジトリの実装とテストを Claude Code にやらせて、結果を Codex が
+確認できるようにするための、**ローカル環境限定の MVP** です。
+
+外部サーバー・GitHub・API キーは一切使いません。
+`claude auth login` 済みの、ローカルの Claude Code CLI をそのまま利用します。
+
+## 前提
+
+- Python 3.11 以上
+- `claude` コマンドがインストール済みで、`claude auth login` でログイン済みであること
+  (このツール自身は認証情報を保持しません)
+- 対象プロジェクトが Git 管理されていること (変更確認に `git status` / `git diff` を使うため)
+
+## 使い方
+
+### 1. 環境確認
+
+```bash
+python -m claude_delegate.cli check
+```
+
+- Python のバージョン
+- `claude` コマンドの有無、`claude --version`
+- `claude auth status` でのログイン状態 (トークンなどの値は絶対に表示しません)
+- 対象プロジェクトの絶対パス
+- Git の有無と現在の未コミット変更
+
+### 2. dry-run (Claude Code は起動しません)
+
+```bash
+python -m claude_delegate.cli run --task tasks/content_mvp.md --project-dir . --dry-run
+```
+
+- 作業フォルダ、読み込むタスクファイル、Claude Code へ渡す指示全文
+- 許可予定のツール・コマンド、拒否するツール・コマンド
+- 実際に叩く起動コマンド (プロンプト本文は文字数のみ表示)
+- タスク文中に危険な指示 (`git push`、`rm -rf`、外部投稿、API キーの要求など) が
+  見つかった場合はここで停止します
+
+### 3. 実行 (`--approve` が無いと Claude Code は起動しません)
+
+```bash
+python -m claude_delegate.cli run --task tasks/content_mvp.md --project-dir . --approve
+```
+
+- `claude -p "<指示>"` を `subprocess` 経由 (`shell=True` は不使用) で起動します
+- `cwd` は `--project-dir` を `resolve()` した絶対パスに固定されます
+- タスク本文はコマンド文字列に連結せず、引数リストの 1 要素として渡します
+- 実行時間の上限はデフォルト 900 秒 (`--timeout` で変更可)
+- 終了後に `git status` / `git diff --stat` で変更ファイル一覧、
+  Claude Code の報告からテスト結果らしい行を抽出して表示します
+- 実行結果 (プロンプト・stdout・stderr・変更ファイル・テスト結果) は
+  `logs/` に日時付き JSON で保存されます (環境変数や API キーはマスキングして記録)
+
+## Claude Code に与える権限
+
+- `Read` / `Glob` / `Grep` / `Edit` / `Write`
+- `Bash` は、指定したテストコマンドと `git status` / `git diff` のみに限定
+  (インストール済みの `claude` が `--allowedTools` / `--disallowedTools` に対応している場合)
+- 対応していない古いバージョンでは、その分の絞り込みができない旨を `check` /
+  `run --dry-run` の出力で警告します
+
+## 禁止している操作
+
+`git push` / `git commit` / `git reset --hard` / `git clean` /
+`git checkout` や `git restore` による変更破棄 / ファイルの大量削除 /
+プロジェクト外のファイル変更 / `curl` `wget` などの外部送信 /
+YouTube・X・note への投稿 / OAuth・API キー・パスワードの要求・表示・保存 /
+`--dangerously-skip-permissions` ・ `bypassPermissions` / `shell=True`。
+
+これらは (1) タスクファイルの事前スキャン、(2) Claude Code の
+`--disallowedTools`、(3) 委託タスクに自動で付ける共通指示、の三段構えで
+防ぎます。許可されていない操作が必要になった場合、Claude Code は
+自動承認せずに失敗として報告する運用を前提としています。
+
+## 安全対策まとめ
+
+- `--approve` を付けない限り Claude Code は絶対に起動しません
+- 実行前に対象パス・タスクパスを `resolve()` し、プロジェクト外を拒否します
+- タスクファイルにはサイズ上限があります (既定 64KB)
+- 実行時間には上限があります (既定 900 秒、`--timeout` で変更可)
+- ログに環境変数や認証情報の値は書き込みません。API キーらしい文字列は
+  `mask_secrets()` で自動マスキングしてから記録します
+- 同時実行防止のロックファイル (`.claude_delegate.lock`) をプロジェクト直下に作ります
+
+## 実行中の注意 (Codex 側への周知)
+
+**`--approve` での実行中は、Codex 自身 (このツールを呼び出している側) も
+対象プロジェクト内のファイルを変更しないでください。**
+Claude Code が同じ作業ツリーを編集しているため、同時編集は競合や
+意図しない上書きの原因になります。ロックファイルはツール同士の多重起動は
+防ぎますが、Codex が直接ファイルシステムを触るのは防げません。
+
+## テスト
+
+```bash
+python -m pytest tests/test_delegate_runner.py
+```
+
+Claude Code 本体は一切起動せず、`subprocess.run` をすべてモックして
+検証します (dry-run で呼ばれないこと、`--approve` 無しで起動しないこと、
+危険なタスクを拒否すること、プロジェクト外パスを拒否すること、
+タイムアウト処理、非 0 終了コードの扱い、ログでの認証情報マスキングなど)。
+
+## 制限事項
+
+- ローカル実行専用の MVP です。リモート実行、キュー、Web UI はありません
+- Claude Code のバージョンによって使えるオプション (`--tools` /
+  `--allowedTools` など) が異なります。無い場合はその分の制限が弱くなるため、
+  `check` の警告を確認してください
+- 危険な指示の検出は正規表現ベースの簡易的なものです。最終的な差分レビューは
+  必ず人手 (または Codex) で行ってください
+- 実際に `--approve` で Claude Code を起動する動作確認は、このツールの
+  実装作業そのものでは行っていません (`--dry-run` までを確認済みです)
